@@ -1,4 +1,5 @@
 import json
+import matplotlib.pyplot as plt
 
 class Util:
     def __init__(self, fpath, dpath):
@@ -95,3 +96,13 @@ class Util:
         print("     'initial_solution': ['random', 'heuristic']")
         print("     'neighbour_selection': ['firstBest', 'bestRandom', 'bestImprovement']")
         print("")
+
+    
+    def plot(self, title, xAxis, yAxis, values):
+        fig = plt.plot(values)
+        plt.setp(fig,"linestyle","none","marker","s","color","r")
+        plt.title(title) 
+        plt.ylabel(yAxis)
+        plt.xlabel(xAxis)
+        plt.show()
+        return True

@@ -2,10 +2,12 @@ import random
 import math
 
 class SA:
-    def __init__(self, problem, cooling, iter_per_temp, temp_initial, temp_min):
+    def __init__(self, problem, max_iter, cooling, iter_per_temp, temp_initial, temp_min):
+        #Set max_iter if temp condition doesnt end
+        self.max_iter = max_iter
+
         #Set initial solution
         #self.initial_solution = initial_solution
-        
         self.qap = problem
 
         #Type of cooling: "Linear", "Geometric" or "Logaritmic"
@@ -24,6 +26,8 @@ class SA:
         self.beta = 10
         self.alpha = 0.1
 
+        self.of_list = []
+        self.total_iterations = 0
     
 
 
@@ -46,7 +50,11 @@ class SA:
         elif self.cooling == "geometric":
             new_temp = self.alpha * self.temp[-1]
         elif self.cooling == "logaritmic":
-            new_temp = (self.temp_initial)/math.log(iteration)
+            #case log(1) = 0
+            if iteration == 1:
+                new_temp = self.temp_initial
+            else:
+                new_temp = (self.temp_initial)/math.log(iteration)
         else:
             #None above, default is Linear
             new_temp = self.temp_initial - (iteration * self.beta)
@@ -74,8 +82,10 @@ class SA:
         currently_solution = self.qap.initial_solution
         of_value = self.qap.objectiveFunction(currently_solution, self.qap.fmatrix, self.qap.dmatrix)
 
+        self.of_list.append(of_value)
+
         #Always access last temperature
-        while self.temp_min < self.temp[-1]:
+        while self.temp_min < self.temp[-1] and i < self.max_iter:
             for j in range(self.iter_per_temp):
                 new_sol = self.generateRandomNeighbour(currently_solution)
                 new_of_value = self.qap.objectiveFunction(new_sol, self.qap.fmatrix, self.qap.dmatrix)
@@ -96,6 +106,8 @@ class SA:
                     if self.acceptance_prob(delta_E, self.temp[-1]):
                         currently_solution = new_sol
                         of_value = new_of_value
+                
+                self.of_list.append(of_value)
 
             self.update_temperature(i)
             i += 1
@@ -104,4 +116,8 @@ class SA:
         print("-------------------")
         print("Final OF: {}".format(of_value))
         print("Final Solutiion: {}".format(currently_solution))
+
+        self.total_iterations = i
+
+        
 

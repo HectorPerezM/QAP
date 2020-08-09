@@ -25,7 +25,7 @@ def main():
 
     #Solve with SA
     if selection == 1:
-        solver = SA(qap, config["cooling"], config["iter_per_temp"], config["temp_initial"], config["temp_min"])
+        solver = SA(qap, config["max_iter"], config["cooling"], config["iter_per_temp"], config["temp_initial"], config["temp_min"])
     
     #Solve with GA
     elif selection == 2:
@@ -36,6 +36,12 @@ def main():
         print("Not implemented yet.")
 
     solver.run()
+
+
+    #Plot
+    util.plot("Simmulated Annealing", "Iterations", "OF", solver.of_list)
+    util.plot("Simmulated Annealing", "Iterations", "Temp", solver.temp)
+
 
 
 
