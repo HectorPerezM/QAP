@@ -1,0 +1,9 @@
+{
+    "initial_solution": "random",
+    "neighbour_selection": "firstBest",
+    "metaheuristic": "SA",
+    "cooling": "linear",
+    "iter_per_temp": 100,
+    "temp_initial": 170,
+    "temp_min": 10
+}
