@@ -63,32 +63,22 @@ class SA:
         self.temp.append(new_temp)
 
 
-    def generateRandomNeighbour(self, currently_solution):
-        neighborhood = []
-        m = len(currently_solution)
-
-        for i in range(m-1):
-            for j in range(i+1, m):
-                neighbour = self.qap.exchange(currently_solution, i, j)
-                neighborhood.append(neighbour)
-
-        
-        return random.choice(neighborhood)
+    
 
 
     def run(self):
         delta_E = 0
         i = 1
         currently_solution = self.qap.initial_solution
-        of_value = self.qap.objectiveFunction(currently_solution, self.qap.fmatrix, self.qap.dmatrix)
+        of_value = self.qap.objectiveFunction(currently_solution)
 
         self.of_list.append(of_value)
 
         #Always access last temperature
         while self.temp_min < self.temp[-1] and i < self.max_iter:
             for j in range(self.iter_per_temp):
-                new_sol = self.generateRandomNeighbour(currently_solution)
-                new_of_value = self.qap.objectiveFunction(new_sol, self.qap.fmatrix, self.qap.dmatrix)
+                new_sol = self.qap.generateRandomNeighbour(currently_solution)
+                new_of_value = self.qap.objectiveFunction(new_sol)
 
                 # print("[new_sol]: {}".format(new_sol))
                 # print("[currently_sol]: {}".format(currently_solution))

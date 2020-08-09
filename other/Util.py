@@ -71,7 +71,7 @@ class Util:
         if selection == 1:
             path = "./config/config_SA.json"
         elif selection == 2:
-            path = "./config/config_SA.json"
+            path = "./config/config_GA.json"
         else:
             path = "./config/config_SA.json"
             

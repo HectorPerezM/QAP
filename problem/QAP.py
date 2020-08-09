@@ -7,21 +7,60 @@ class QAP:
         
         self.type_initial_solution = type_initial_solution
         self.initial_solution = []
+        self.amount_population = 0
     
 
+
+    #GA Config
+    def setAmountPopulation(self, amount):
+        self.amount_population = amount
+
+
+    #Initial Solution
     def randomInitalSolution(self, num_facilities):
         all_facilities = list(range(1, num_facilities + 1))
         random.shuffle(all_facilities)
         return all_facilities
 
 
+    #TODO: no garantiza soluciones iniciales unicas
+    def randomInitialPopulation(self, num_facilities):
+        initial_solution = []
+        for _ in range(self.amount_population):
+            all_facilities = list(range(1, num_facilities + 1))
+            random.shuffle(all_facilities)
+            initial_solution.append(all_facilities)
+        
+        return initial_solution
+
+
     def generateInitialSolution(self):
         if self.type_initial_solution == "random":
             return self.randomInitalSolution(len(self.fmatrix))
+        
+        #Initial solution (Generation) for GA
+        elif self.type_initial_solution == "randomGA":
+            return self.randomInitialPopulation(len(self.fmatrix))
+
         else:
             print("Not implemented yet.")
 
 
+    #Neighbourhood generators
+    def generateRandomNeighbour(self, currently_solution):
+        neighborhood = []
+        m = len(currently_solution)
+
+        for i in range(m-1):
+            for j in range(i+1, m):
+                neighbour = self.exchange(currently_solution, i, j)
+                neighborhood.append(neighbour)
+
+        
+        return random.choice(neighborhood)
+
+
+    # QAP Operators
     def exchange(self, s, i, j):
         x = list(s)
         x[i] = s[j]
@@ -29,7 +68,8 @@ class QAP:
         return x
 
 
-    def objectiveFunction(self, permutations, fmatrix, dmatrix):
+    # Objective Function
+    def objectiveFunction(self, permutations):
         m = len(permutations)
         total = 0
 
@@ -38,8 +78,8 @@ class QAP:
                 iD = permutations[i] - 1
                 jD = permutations[j] - 1
 
-                d = dmatrix[iD][jD]
-                f = fmatrix[i][j]
+                d = self.dmatrix[iD][jD]
+                f = self.fmatrix[i][j]
 
                 total += f*d
         

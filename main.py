@@ -1,5 +1,6 @@
 from other.Util import Util
 from solution.SA import SA
+from solution.GA import GA
 from problem.QAP import QAP
 
 def main():
@@ -20,16 +21,20 @@ def main():
 
     #Configurate problem
     qap = QAP(config["initial_solution"], fmatrix, dmatrix)
-    qap.initial_solution = qap.generateInitialSolution()
-
+    
 
     #Solve with SA
     if selection == 1:
+        qap.initial_solution = qap.generateInitialSolution()
         solver = SA(qap, config["max_iter"], config["cooling"], config["iter_per_temp"], config["temp_initial"], config["temp_min"])
     
     #Solve with GA
     elif selection == 2:
-        print("Not implemented yet.")
+        #Config QAP for GA
+        qap.setAmountPopulation(config["amount_population"])
+        qap.initial_solution = qap.generateInitialSolution()
+
+        solver = GA(qap, config["total_iteration"])
 
     #Solve with default SA
     else:
@@ -38,9 +43,9 @@ def main():
     solver.run()
 
 
-    #Plot
-    util.plot("Simmulated Annealing", "Iterations", "OF", solver.of_list)
-    util.plot("Simmulated Annealing", "Iterations", "Temp", solver.temp)
+    # #Plot
+    # util.plot("Simmulated Annealing", "Iterations", "OF", solver.of_list)
+    # util.plot("Simmulated Annealing", "Iterations", "Temp", solver.temp)
 
 
 

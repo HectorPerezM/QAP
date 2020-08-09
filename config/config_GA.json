@@ -1,0 +1,6 @@
+{
+    "initial_solution": "randomGA",
+    "total_iteration": 100,
+    "amount_population": 50,
+    "metaheuristic": "GA"
+}

@@ -2,9 +2,9 @@
     "initial_solution": "random",
     "neighbour_selection": "firstBest",
     "metaheuristic": "SA",
-    "cooling": "geometric",
+    "cooling": "linear",
     "max_iter": 1000,
     "iter_per_temp": 100,
-    "temp_initial": 170,
-    "temp_min": 10
+    "temp_initial": 200,
+    "temp_min": 1
 }
