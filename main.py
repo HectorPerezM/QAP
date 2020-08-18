@@ -4,29 +4,33 @@ from solution.GA import GA
 from problem.QAP import QAP
 
 def main():
-    #Create Util object & pass data files
-    util = Util("./data/FChr12a.txt", "./data/DChr12a.txt")
-    # util.configFileInfo()
+    #Create Util object
+    util = Util()
+    #util.configFileInfo()
 
     #Load configuration file
     config_path, selection = util.selectedConfigFile()
     config = util.readConfigFile(config_path)
     
 
-    fmatrix = util.readDataFiles(util.getfpath())
-    dmatrix = util.readDataFiles(util.getdpath())
+    fmatrix = util.readDataFiles(config["facilities_data_path"])
+    dmatrix = util.readDataFiles(config["distance_data_path"])
 
-    assert(util.checkInputs(fmatrix))
-    assert(util.checkInputs(dmatrix))
+    assert util.checkInputs(fmatrix), "Facilitie matrix is empty."
+    assert util.checkInputs(dmatrix), "Distance matrix is empty."
 
     #Configurate problem
-    qap = QAP(config["initial_solution"], fmatrix, dmatrix)
+    qap = QAP(config["type_initial_solution"], fmatrix, dmatrix)
     
-
     #Solve with SA
     if selection == 1:
-        qap.initial_solution = qap.generateInitialSolution()
-        solver = SA(qap, config["max_iter"], config["cooling"], config["iter_per_temp"], config["temp_initial"], config["temp_min"])
+        is_created = qap.generateInitialSolution()
+        assert is_created, "Couldn't create a initial solution for SA."
+
+        #Create the solver object, configured to run SA
+        solver = SA(qap, config["max_iter"], config["cooling"], 
+                    config["iter_per_temp"], config["temp_initial"], 
+                    config["temp_min"], config["beta"], config["alpha"])
     
     #Solve with GA
     elif selection == 2:
@@ -40,12 +44,15 @@ def main():
     else:
         print("Not implemented yet.")
 
+    #Start selected metaheuristic
     solver.run()
 
+    #Plot
+    util.plot("Simmulated Annealing", "Iterations", "OF", solver.of_list)
+    util.plot("Simmulated Annealing", "Iterations", "Temp", solver.temp)
+    util.plot("Simmulated Annealing", "Iterations", "Time (s)", solver.time_per_iteration)
 
-    # #Plot
-    # util.plot("Simmulated Annealing", "Iterations", "OF", solver.of_list)
-    # util.plot("Simmulated Annealing", "Iterations", "Temp", solver.temp)
+    #Save results
 
 
 

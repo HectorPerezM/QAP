@@ -1,10 +1,14 @@
 {
-    "initial_solution": "random",
+    "distance_data_path": "./data/DChr12a.txt",
+    "facilities_data_path": "./data/FChr12a.txt",
+    "type_initial_solution": "random",
     "neighbour_selection": "firstBest",
     "metaheuristic": "SA",
-    "cooling": "linear",
-    "max_iter": 1000,
-    "iter_per_temp": 100,
-    "temp_initial": 200,
-    "temp_min": 1
+    "cooling": "geometric",
+    "max_iter": 2500,
+    "iter_per_temp": 150,
+    "temp_initial": 700,
+    "temp_min": 1,
+    "beta": 2,
+    "alpha": 0.99
 }

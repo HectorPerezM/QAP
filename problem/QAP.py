@@ -36,14 +36,15 @@ class QAP:
 
     def generateInitialSolution(self):
         if self.type_initial_solution == "random":
-            return self.randomInitalSolution(len(self.fmatrix))
-        
+            self.initial_solution = self.randomInitalSolution(len(self.fmatrix))
+            return True
+
         #Initial solution (Generation) for GA
         elif self.type_initial_solution == "randomGA":
-            return self.randomInitialPopulation(len(self.fmatrix))
-
+            self.initial_solution = self.randomInitialPopulation(len(self.fmatrix))
+            return True
         else:
-            print("Not implemented yet.")
+            return False
 
 
     #Neighbourhood generators

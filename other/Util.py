@@ -2,9 +2,8 @@ import json
 import matplotlib.pyplot as plt
 
 class Util:
-    def __init__(self, fpath, dpath):
-        self.fpath = fpath
-        self.dpath = dpath
+    def __init__(self):
+        print("Util object created.")
 
     def getfpath(self):
         return self.fpath
@@ -55,7 +54,7 @@ class Util:
         print("Select your configuration file: ")
         print(" 1. Simmulated Annealing configuration")
         print(" 2. Genetic Algorithm configuration")
-        print(" 3. other configuration")
+        print(" 3. other configuration (default SA config)")
 
         selection = -1
         options = [*range(1,4)]

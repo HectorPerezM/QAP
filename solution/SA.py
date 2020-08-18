@@ -1,8 +1,9 @@
 import random
 import math
+import time
 
 class SA:
-    def __init__(self, problem, max_iter, cooling, iter_per_temp, temp_initial, temp_min):
+    def __init__(self, problem, max_iter, cooling, iter_per_temp, temp_initial, temp_min, beta, alpha):
         #Set max_iter if temp condition doesnt end
         self.max_iter = max_iter
 
@@ -21,14 +22,20 @@ class SA:
         self.temp_min = temp_min
         self.temp = [temp_initial]
 
-
-        #TODO: quizas poner como parametro configurable
-        self.beta = 10
-        self.alpha = 0.1
+        #Used in cooling functions
+        self.beta = beta
+        #Alpha mus be between ]0, 1[, othewise forced to 0.5
+        if alpha <= 0 or alpha >= 1:
+            self.alpha = 0.5
+        else:
+            self.alpha = alpha
 
         self.of_list = []
         self.total_iterations = 0
-    
+
+        #To control time
+        self.time_per_iteration = []
+        self.total_time = 0
 
 
     def acceptance_prob(self, delta_E, temp):
@@ -43,7 +50,6 @@ class SA:
     def update_temperature(self, iteration):
         new_temp = 0
 
-        print(iteration)
         #Depends on choseen cooling
         if self.cooling == "linear":
             new_temp = self.temp_initial - (iteration * self.beta)
@@ -58,8 +64,7 @@ class SA:
         else:
             #None above, default is Linear
             new_temp = self.temp_initial - (iteration * self.beta)
-        
-        print("old_temp: {} | new_temp: {}".format(self.temp[-1], new_temp))
+
         self.temp.append(new_temp)
 
 
@@ -75,17 +80,14 @@ class SA:
         self.of_list.append(of_value)
 
         #Always access last temperature
+        start_time_total = time.time()
+
         while self.temp_min < self.temp[-1] and i < self.max_iter:
+            
+            start_time_iterations = time.time()
             for j in range(self.iter_per_temp):
                 new_sol = self.qap.generateRandomNeighbour(currently_solution)
                 new_of_value = self.qap.objectiveFunction(new_sol)
-
-                # print("[new_sol]: {}".format(new_sol))
-                # print("[currently_sol]: {}".format(currently_solution))
-
-                print("[of_value]: {}".format(of_value))
-                print("[new_of_value]: {}".format(new_of_value))
-                # print(self.temp)
 
                 delta_E = new_of_value - of_value
                 if delta_E <= 0:
@@ -96,14 +98,16 @@ class SA:
                     if self.acceptance_prob(delta_E, self.temp[-1]):
                         currently_solution = new_sol
                         of_value = new_of_value
-                
-                self.of_list.append(of_value)
+            
+            self.time_per_iteration.append(time.time() - start_time_iterations)
 
+            self.of_list.append(of_value)
             self.update_temperature(i)
             i += 1
         
-
+        self.total_time = time.time() - start_time_total
         print("-------------------")
+        print("Total Time: {}".format(self.total_time))
         print("Final OF: {}".format(of_value))
         print("Final Solutiion: {}".format(currently_solution))
 
