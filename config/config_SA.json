@@ -4,11 +4,11 @@
     "type_initial_solution": "random",
     "neighbour_selection": "firstBest",
     "metaheuristic": "SA",
-    "cooling": "geometric",
-    "max_iter": 2500,
-    "iter_per_temp": 150,
-    "temp_initial": 700,
-    "temp_min": 1,
+    "cooling": "logaritmic",
+    "max_iter": 5500,
+    "iter_per_temp": 350,
+    "temp_initial": 520,
+    "temp_min": 0.01,
     "beta": 2,
-    "alpha": 0.99
+    "alpha": 0.5
 }

@@ -1,6 +1,12 @@
 {
-    "initial_solution": "randomGA",
-    "total_iteration": 100,
-    "amount_population": 50,
-    "metaheuristic": "GA"
+    "distance_data_path": "./data/DChr12a.txt",
+    "facilities_data_path": "./data/FChr12a.txt",
+    "type_initial_solution": "randomGA",
+    "total_iteration": 2,
+    "amount_population": 12,
+    "metaheuristic": "GA",
+    "selection_criteria": "tournament",
+    "tournament_size": 5,
+    "tournament_times": 25,
+    "mutation_chance": 0.1
 }

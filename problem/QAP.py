@@ -4,16 +4,11 @@ class QAP:
     def __init__(self, type_initial_solution, fmatrix, dmatrix):
         self.fmatrix = fmatrix
         self.dmatrix = dmatrix
-        
+        self.solution_size = len(fmatrix) 
+
         self.type_initial_solution = type_initial_solution
         self.initial_solution = []
-        self.amount_population = 0
     
-
-
-    #GA Config
-    def setAmountPopulation(self, amount):
-        self.amount_population = amount
 
 
     #Initial Solution
@@ -23,18 +18,9 @@ class QAP:
         return all_facilities
 
 
-    #TODO: no garantiza soluciones iniciales unicas
-    def randomInitialPopulation(self, num_facilities):
-        initial_solution = []
-        for _ in range(self.amount_population):
-            all_facilities = list(range(1, num_facilities + 1))
-            random.shuffle(all_facilities)
-            initial_solution.append(all_facilities)
-        
-        return initial_solution
-
 
     def generateInitialSolution(self):
+        #Initial solution for SA
         if self.type_initial_solution == "random":
             self.initial_solution = self.randomInitalSolution(len(self.fmatrix))
             return True
@@ -43,6 +29,7 @@ class QAP:
         elif self.type_initial_solution == "randomGA":
             self.initial_solution = self.randomInitialPopulation(len(self.fmatrix))
             return True
+            
         else:
             return False
 

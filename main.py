@@ -35,10 +35,9 @@ def main():
     #Solve with GA
     elif selection == 2:
         #Config QAP for GA
-        qap.setAmountPopulation(config["amount_population"])
-        qap.initial_solution = qap.generateInitialSolution()
-
-        solver = GA(qap, config["total_iteration"])
+        solver = GA(qap, config["total_iteration"], config["amount_population"], 
+                    config["selection_criteria"], config["tournament_size"],
+                    config["tournament_times"], config['mutation_chance'])
 
     #Solve with default SA
     else:
@@ -48,9 +47,9 @@ def main():
     solver.run()
 
     #Plot
-    util.plot("Simmulated Annealing", "Iterations", "OF", solver.of_list)
-    util.plot("Simmulated Annealing", "Iterations", "Temp", solver.temp)
-    util.plot("Simmulated Annealing", "Iterations", "Time (s)", solver.time_per_iteration)
+    #util.plot("Simmulated Annealing", "Iterations", "OF", solver.of_list)
+    #util.plot("Simmulated Annealing", "Iterations", "Temp", solver.temp)
+    #util.plot("Simmulated Annealing", "Iterations", "Time (s)", solver.time_per_iteration)
 
     #Save results
 
