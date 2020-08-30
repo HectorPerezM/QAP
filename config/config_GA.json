@@ -1,12 +1,19 @@
-{
-    "distance_data_path": "./data/DChr12a.txt",
-    "facilities_data_path": "./data/FChr12a.txt",
-    "type_initial_solution": "randomGA",
-    "total_iteration": 2,
-    "amount_population": 12,
-    "metaheuristic": "GA",
-    "selection_criteria": "tournament",
-    "tournament_size": 5,
-    "tournament_times": 25,
-    "mutation_chance": 0.1
-}
+[
+    {
+        "size_experiment": 1,
+        "results_path": "./results/ga/data_esc64_1/",
+        "csv_path": "data_esc64_1.csv",
+        "images_path": "images/",
+        "dataset_name": "esc64",
+        "distance_data_path": "./data/DEsc64a.txt",
+        "facilities_data_path": "./data/FEsc64a.txt",
+        "type_initial_solution": "randomGA",
+        "total_generations": 20,
+        "size_population": 50,
+        "metaheuristic": "GA",
+        "selection_criteria": "tournament",
+        "tournament_size": 20,
+        "tournament_times": 25,
+        "mutation_chance": 0.1
+    }
+]

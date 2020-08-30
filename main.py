@@ -6,54 +6,51 @@ from problem.QAP import QAP
 def main():
     #Create Util object
     util = Util()
-    #util.configFileInfo()
 
-    #Load configuration file
-    config_path, selection = util.selectedConfigFile()
-    config = util.readConfigFile(config_path)
-    
+    config = util.getConfig()
+    m = len(config)
+    for i in range(m):
+        #Configure folder
+        util.configureResultsFolder(config[i])
 
-    fmatrix = util.readDataFiles(config["facilities_data_path"])
-    dmatrix = util.readDataFiles(config["distance_data_path"])
+        #Init QAP
+        qap = QAP()
+        qap.readData(config[i])
 
-    assert util.checkInputs(fmatrix), "Facilitie matrix is empty."
-    assert util.checkInputs(dmatrix), "Distance matrix is empty."
+        #Start experiments
+        for e in range(config[i]['size_experiment']):
+            #Solve with SA
+            if util.selected_config == 1:            
+                solver = SA(qap, config[i])
+                solver.run()
+                util.saveResults(i, e, config[i], solver)
+                util.savePlot(i, e, config[i], solver)
 
-    #Configurate problem
-    qap = QAP(config["type_initial_solution"], fmatrix, dmatrix)
-    
-    #Solve with SA
-    if selection == 1:
-        is_created = qap.generateInitialSolution()
-        assert is_created, "Couldn't create a initial solution for SA."
+            #Solve with GA
+            elif selection == 2:
+                solver = GA(qap, config[i])
 
-        #Create the solver object, configured to run SA
-        solver = SA(qap, config["max_iter"], config["cooling"], 
-                    config["iter_per_temp"], config["temp_initial"], 
-                    config["temp_min"], config["beta"], config["alpha"])
-    
-    #Solve with GA
-    elif selection == 2:
-        #Config QAP for GA
-        solver = GA(qap, config["total_iteration"], config["amount_population"], 
-                    config["selection_criteria"], config["tournament_size"],
-                    config["tournament_times"], config['mutation_chance'])
-
-    #Solve with default SA
-    else:
-        print("Not implemented yet.")
-
-    #Start selected metaheuristic
-    solver.run()
-
-    #Plot
-    #util.plot("Simmulated Annealing", "Iterations", "OF", solver.of_list)
-    #util.plot("Simmulated Annealing", "Iterations", "Temp", solver.temp)
-    #util.plot("Simmulated Annealing", "Iterations", "Time (s)", solver.time_per_iteration)
-
-    #Save results
+            #Solve with default SA
+            else:
+                print("Not implemented yet.")
 
 
+            
+            # solver.run()
+
+            # #Save results
+            # if selection == 1:
+            #     util.saveResults(solver, e, config[i])
+            #     util.savePlot(solver, e, config[i])
+            
+            # elif selection == 2:
+            #     util.saveResults(solver, e, 'GA')
+            
+            # else:
+            #     print('Not implemented yet.')
+            
+
+            print(f"finished: exp -> {e} config -> {i}")
 
 
 if __name__ == "__main__":

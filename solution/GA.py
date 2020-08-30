@@ -3,32 +3,39 @@ import random
 
 class GA:
 
-    def __init__(self, problem, total_iteration, 
-                amount_population, selection_criteria, 
-                tour_size, tour_times, mutation_chance):
+    def __init__(self, problem, config):
         #GA for QAP problem
         self.qap = problem
         
-        #CONFIGURABLE PARAMETERS
-        self.total_iteration = total_iteration
-        self.amount_population = amount_population
-
+        #Config parameters
+        
+        #Population
+        self.total_generations = config['total_generations']
+        self.size_population = config['size_population']
         self.population = []
 
         #Selection criteria
-        self.selection_criteria = selection_criteria
-        self.tournament_size = tour_size
-        self.tournament_times = tour_times
+        self.selection_criteria = config['selection_criteria']
+        if config['selection_criteria'] == 'tournament':
+            self.tournament_size = config['tournament_size']
+            self.tournament_times = config['tournament_times']
+        else:
+            self.tournament_size = 0
+            self.tournament_times = 0
 
-        self.mutation_chance = mutation_chance
 
+        self.mutation_chance = config['mutation_chance']
         self.best_generation = []
     
 
 
+    def printPopulation(self, number):
+        for i in range(number):
+            print(f"    {self.population[i]}")
+
     def randomInitialPopulation(self):
         population = []
-        for _ in range(self.amount_population):
+        for _ in range(self.size_population):
             individual = {
                 'fitness': 0,
                 'solution': self.qap.randomInitalSolution(len(self.qap.fmatrix))
@@ -43,9 +50,6 @@ class GA:
         if self.qap.type_initial_solution == "randomGA":
             self.population = self.randomInitialPopulation()
 
-
-    #Selection criteria methods
-    #TODO: Incompleto
     def rouletteSelection(self):
         m = len(self.population)
         total_fitness = 0
@@ -57,8 +61,19 @@ class GA:
             self.population[i]['selection_prob'] = self.population[i]['fitness'] / total_fitness
         
         return []
-
     
+    def bestOfTournament(self, tournament):
+        best_index = 0
+        best_value = 0
+        m = len(tournament)
+
+        for i in range(m):
+            if tournament[i]['fitness'] <= best_value:
+                best_index = i
+                best_value = tournament[i]['fitness']
+        
+        return tournament[best_index]
+
     def tournamentSelection(self):
         new_population = []
 
@@ -67,28 +82,20 @@ class GA:
             #Selected for the tournament:
             tournament = []
             for _ in range(self.tournament_size):
-                index = random.randint(0, (self.amount_population - 1))
+                index = random.randint(0, (self.size_population - 1))
                 tournament.append(self.population[index])
             
             #Get the best of the tournament
-            best_index = 0
-            best_value = 9999999
-            for p in range(self.tournament_size):
-                if tournament[p]['fitness'] <= best_value:
-                    best_index = p
-                    best_value = tournament[p]['fitness'] 
-            
-            new_population.append(tournament[best_index])
+            best = self.bestOfTournament(tournament)
+            new_population.append(best)
             
         return new_population
-
 
     def selectionCriteria(self):
         if self.selection_criteria == "roulette":
             return self.rouletteSelection()
         
         elif self.selection_criteria == 'tournament':
-            #print("Selection by tournament")
             return self.tournamentSelection()
         
         else:
@@ -96,13 +103,12 @@ class GA:
 
 
     #Evalua cada individuo y guarda su indice/valor en evaluation, luego lo ordena
-    def evaluatePopulation(self):
-        m = len(self.population)
+    def evaluatePopulation(self, population):
+        m = len(population)
 
         for i in range(m):
-            of_value = self.qap.objectiveFunction(self.population[i]['solution'])
-            
-            self.population[i]['fitness'] = of_value
+            of_value = self.qap.objectiveFunction(population[i]['solution'])
+            population[i]['fitness'] = of_value
 
         
         #self.evaluation = sorted(self.evaluation, key=lambda k: k['of_value'])
@@ -112,8 +118,8 @@ class GA:
         chance = random.uniform(0, 1)
         if chance <= self.mutation_chance:
            #Swap mutation
-           i = random.randint(0, (self.amount_population - 1))
-           j = random.randint(0, (self.amount_population - 1))
+           i = random.randint(0, (self.qap.solution_size - 1))
+           j = random.randint(0, (self.qap.solution_size - 1))
 
            x = child['solution'][i]
            y = child['solution'][j]
@@ -124,9 +130,9 @@ class GA:
         return child
 
 
-
     def reproducePopulation(self, selected_population):
         new_population = selected_population.copy()
+
 
         #Take a parent, select a portion of his solution, and create a new child
         m = len(selected_population) 
@@ -172,7 +178,7 @@ class GA:
 
             new_population.append(new_child)
         
-        if len(new_population) < self.amount_population:
+        if len(new_population) < self.size_population:
             print("La poblacion se redujo, error!")
             exit()
         
@@ -189,30 +195,37 @@ class GA:
                 best_index = p
                 best_value = population[p]['fitness']
 
-        self.best_generation.append(population[best_index]) 
+        self.best_generation.append(population[best_index]['fitness']) 
 
         
     def run(self):
         #Initial population
         self.generateInitialPopulation()
 
+        print("----- Initial population. ---------")
+        self.printPopulation(10)
+        print("------------------------------------")
+
         new_population = []
         t = 0
         
         #Termination critearia
-        while t < self.total_iteration:
-            print()
-            print(len(self.population))
-            print("-----------------")
-
+        while t < self.total_generations:
             #Evaluate population
-            self.evaluatePopulation()
+            self.evaluatePopulation(self.population)
+
+            print(f"---- Gen: {t} --")
+            self.printPopulation(10)
+            # print(len(self.population))
+            print("-----------------")
 
             #Select new population
             new_population = self.selectionCriteria()
 
             #Reproduction
             new_population = self.reproducePopulation(new_population)
+
+            self.evaluatePopulation(new_population)
 
             #Find best in generation
             self.findBestInPopulation(new_population)
@@ -223,5 +236,6 @@ class GA:
 
 
         print("Finished GA")
+        print(self.best_generation)
         
         #Return best indidual or best population

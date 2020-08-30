@@ -1,14 +1,33 @@
 import random
 
 class QAP:
-    def __init__(self, type_initial_solution, fmatrix, dmatrix):
-        self.fmatrix = fmatrix
-        self.dmatrix = dmatrix
-        self.solution_size = len(fmatrix) 
+    def __init__(self):
+        self.fmatrix = []
+        self.dmatrix = []
+        self.solution_size = 0
+        
+    def readData(self, config):
+        if config['dataset_name'] == "":
+            print('dataset_name is empty.')
+            exit()
+        
+        #read test data
+        elif config['dataset_name'] == "chr12a":
+            raw_f_data = open(config['data_path'] + "/FChr12a.txt", "r")
+            for line in raw_f_data:
+                aux = list(map(int, line.split()))
+                self.fmatrix.append(aux)
+                
+            raw_d_data = open(config['data_path'] + "/DChr12a.txt", "r")
+            for line in raw_d_data:
+                aux = list(map(int, line.split()))
+                self.dmatrix.append(aux)
 
-        self.type_initial_solution = type_initial_solution
-        self.initial_solution = []
-    
+            self.solution_size = len(self.fmatrix)
+        
+        else:
+            print('No existe el archivo de datos.')
+            exit()
 
 
     #Initial Solution
@@ -16,7 +35,6 @@ class QAP:
         all_facilities = list(range(1, num_facilities + 1))
         random.shuffle(all_facilities)
         return all_facilities
-
 
 
     def generateInitialSolution(self):
@@ -33,6 +51,12 @@ class QAP:
         else:
             return False
 
+
+    def generateNeighbour(self, currently_solution):
+        i = random.randint(2, len(currently_solution) - 1)
+        j = random.randint(0, len(currently_solution) - i)
+        currently_solution[j: (j + i)] = reversed(currently_solution[j: (j + i)])
+        return(currently_solution)
 
     #Neighbourhood generators
     def generateRandomNeighbour(self, currently_solution):
