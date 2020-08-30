@@ -29,26 +29,14 @@ def main():
             #Solve with GA
             elif selection == 2:
                 solver = GA(qap, config[i])
+                solver.runt()
+                util.saveResults(i, e, config[i], solver)
+                util.savePlot(i, e, config[i], solver)
 
             #Solve with default SA
             else:
                 print("Not implemented yet.")
-
-
-            
-            # solver.run()
-
-            # #Save results
-            # if selection == 1:
-            #     util.saveResults(solver, e, config[i])
-            #     util.savePlot(solver, e, config[i])
-            
-            # elif selection == 2:
-            #     util.saveResults(solver, e, 'GA')
-            
-            # else:
-            #     print('Not implemented yet.')
-            
+                exit()
 
             print(f"finished: exp -> {e} config -> {i}")
 

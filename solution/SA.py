@@ -96,7 +96,7 @@ class SA:
         if self.cooling == "logaritmic":
             #case log(1) = 0
             if iteration < self.max_iter:
-                if iteration == 0:
+                if iteration == 1:
                     t = self.temp_initial
                     return t
                 else:

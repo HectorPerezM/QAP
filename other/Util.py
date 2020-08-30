@@ -76,40 +76,57 @@ class Util:
                                     solver.experiment_results['temperatures'][i],
                                     solver.experiment_results['time_per_iteration'][i],
                                     solver.experiment_results['probabilities'][i]])
-    
+
+        if config['metaheuristic'] == 'genetic_algorithm':
+            exit()
 
     def savePlot(self, config_number, e, config, solver):
-        plt.figure(1, figsize=(10,10))
-        plt.subplot(4, 1, 1)
-        best = plt.plot(solver.experiment_results['of_values'])
-        plt.setp(best,"linestyle","none","marker",".","color","b","markersize","1")
-        plt.title("Simulated Annealing p-median: " + config['dataset_name']) 
-        plt.ylabel("Objective Value")
-        
-        plt.subplot(4, 1, 2)
-        grafico = plt.plot(solver.experiment_results['best_of_values'])
-        plt.setp(grafico,"linestyle","none","marker","s","color","r","markersize","1")
-        plt.ylabel("Objective Value")
+        if config['metaheuristic'] == "simulated_annealing":
+            plt.figure(1, figsize=(10,10))
+            plt.subplot(4, 1, 1)
+            best = plt.plot(solver.experiment_results['of_values'])
+            plt.setp(best,"linestyle","none","marker",".","color","b","markersize","1")
+            plt.title("Simulated Annealing QAP: " + config['dataset_name']) 
+            plt.ylabel("Objective Value")
+            
+            plt.subplot(4, 1, 2)
+            grafico = plt.plot(solver.experiment_results['best_of_values'])
+            plt.setp(grafico,"linestyle","none","marker","s","color","r","markersize","1")
+            plt.ylabel("Objective Value")
 
-        plt.subplot(4, 1, 3)
-        grafico = plt.plot(solver.experiment_results['temperatures'])
-        plt.setp(grafico,"linestyle","none","marker","s","color","orange","markersize","1")
-        plt.ylabel("Temperature")
-        
-        plt.subplot(4, 1, 4)
-        grafico = plt.plot(solver.experiment_results['probabilities'])
-        plt.setp(grafico,"linestyle","none","marker","o","color","g","markersize","1")
-        plt.ylabel("Probability")
+            plt.subplot(4, 1, 3)
+            grafico = plt.plot(solver.experiment_results['temperatures'])
+            plt.setp(grafico,"linestyle","none","marker","s","color","orange","markersize","1")
+            plt.ylabel("Temperature")
+            
+            plt.subplot(4, 1, 4)
+            grafico = plt.plot(solver.experiment_results['probabilities'])
+            plt.setp(grafico,"linestyle","none","marker","o","color","g","markersize","1")
+            plt.ylabel("Probability")
 
-        # plt.subplot(5, 1, 5)
-        # grafico = plt.plot(solver.experiment_results['time_per_iteration'])
-        # plt.setp(grafico,"linestyle","none","marker",".","color","black","markersize","1")
-        # plt.ylabel("Time")
+            # plt.subplot(5, 1, 5)
+            # grafico = plt.plot(solver.experiment_results['time_per_iteration'])
+            # plt.setp(grafico,"linestyle","none","marker",".","color","black","markersize","1")
+            # plt.ylabel("Time")
+            
+            path_to_save = config['results_path'] + config['images_path'] + str(config_number) + "_" +str(e) + ".png"
+            plt.savefig(path_to_save)
+            plt.clf()
         
-        path_to_save = config['results_path'] + config['images_path'] + str(config_number) + "_" +str(e) + ".png"
-        plt.savefig(path_to_save)
-        plt.clf()
+        if config['metaheuristic'] == "genetic_algorithm":
+            plt.figure(1, figsize=(10,10))
+            plt.subplot(1, 1, 1)
+            best = plt.plot(solver.experiment_results['of_values'])
+            plt.setp(best,"linestyle","none","marker",".","color","b","markersize","1")
+            plt.title("Genetic Algorithm QAP: " + config['dataset_name']) 
+            plt.ylabel("Objective Value")
 
+
+            path_to_save = config['results_path'] + config['images_path'] + str(config_number) + "_" +str(e) + ".png"
+            plt.savefig(path_to_save)
+            plt.clf()
+            
+            
 
     def readDataFiles(self, path=""):
         if path == "":

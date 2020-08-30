@@ -25,6 +25,32 @@ class QAP:
 
             self.solution_size = len(self.fmatrix)
         
+        elif config['dataset_name'] == "chr18a":
+            raw_f_data = open(config['data_path'] + "/FChr18a.txt", "r")
+            for line in raw_f_data:
+                aux = list(map(int, line.split()))
+                self.fmatrix.append(aux)
+                
+            raw_d_data = open(config['data_path'] + "/DChr18a.txt", "r")
+            for line in raw_d_data:
+                aux = list(map(int, line.split()))
+                self.dmatrix.append(aux)
+
+            self.solution_size = len(self.fmatrix)
+        
+        elif config['dataset_name'] == "chr25a":
+            raw_f_data = open(config['data_path'] + "/FChr25a.txt", "r")
+            for line in raw_f_data:
+                aux = list(map(int, line.split()))
+                self.fmatrix.append(aux)
+                
+            raw_d_data = open(config['data_path'] + "/DChr25a.txt", "r")
+            for line in raw_d_data:
+                aux = list(map(int, line.split()))
+                self.dmatrix.append(aux)
+
+            self.solution_size = len(self.fmatrix)
+
         else:
             print('No existe el archivo de datos.')
             exit()
