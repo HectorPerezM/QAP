@@ -1,5 +1,6 @@
 import math
 import random
+import time
 
 class GA:
 
@@ -8,7 +9,7 @@ class GA:
         self.qap = problem
         
         #Config parameters
-        
+        self.type_initial_solution = config['type_initial_solution']
         #Population
         self.total_generations = config['total_generations']
         self.size_population = config['size_population']
@@ -22,16 +23,36 @@ class GA:
         else:
             self.tournament_size = 0
             self.tournament_times = 0
-
+        
+        if config['selection_criteria'] == 'random':
+            self.size_random_selection = config['random_selection']
+        else:
+            self.size_random_selection = 0
+        
+        if config['selection_criteria'] == 'best_percentage':
+            self.size_random_selection = config['best_pct']
+        else:
+            self.size_random_selection = 0
 
         self.mutation_chance = config['mutation_chance']
-        self.best_generation = []
+
+        self.mean_all_of_value = 0
+        self.mean_best_of_value = 0
+        self.mean_time_per_iter = 0
+        self.total_time = 0
+
+        self.results = {
+            'population_of_best': [],
+            'mean_generation': [],
+            'time_per_gen': []
+        }
     
 
 
     def printPopulation(self, number):
         for i in range(number):
             print(f"    {self.population[i]}")
+
 
     def randomInitialPopulation(self):
         population = []
@@ -43,12 +64,13 @@ class GA:
 
             population.append(individual)
         
-        print(f"randomInitialPopulation: {len(population)}")
         return population
 
+
     def generateInitialPopulation(self):
-        if self.qap.type_initial_solution == "randomGA":
+        if self.type_initial_solution == "random":
             self.population = self.randomInitialPopulation()
+
 
     def rouletteSelection(self):
         m = len(self.population)
@@ -61,7 +83,8 @@ class GA:
             self.population[i]['selection_prob'] = self.population[i]['fitness'] / total_fitness
         
         return []
-    
+
+
     def bestOfTournament(self, tournament):
         best_index = 0
         best_value = 0
@@ -73,6 +96,7 @@ class GA:
                 best_value = tournament[i]['fitness']
         
         return tournament[best_index]
+
 
     def tournamentSelection(self):
         new_population = []
@@ -91,13 +115,20 @@ class GA:
             
         return new_population
 
+
+    def bestPercentageSelection(self):
+        exit()
+
+
     def selectionCriteria(self):
-        if self.selection_criteria == "roulette":
-            return self.rouletteSelection()
+        if self.selection_criteria == "random":
+            return self.randomSelection()
         
         elif self.selection_criteria == 'tournament':
             return self.tournamentSelection()
         
+        elif self.selection_criteria == 'best_percentage':
+            return self.bestPercentageSelection()
         else:
             return []
 
@@ -115,8 +146,8 @@ class GA:
 
 
     def mutateChild(self, child):
-        chance = random.uniform(0, 1)
-        if chance <= self.mutation_chance:
+        chance = random.random()
+        if chance < self.mutation_chance:
            #Swap mutation
            i = random.randint(0, (self.qap.solution_size - 1))
            j = random.randint(0, (self.qap.solution_size - 1))
@@ -126,19 +157,103 @@ class GA:
 
            child['solution'][i] = y
            child['solution'][j] = x
-        
+
         return child
 
 
+    def one_point_crossover(self, parent1, parent2):
+        child1 = {
+            'fitness': 0,
+            'solution': [0] * self.qap.solution_size
+        }
+
+        child2 = {
+            'fitness': 0,
+            'solution': [0] * self.qap.solution_size
+        }
+        
+        
+        i = random.randint(1, (math.floor(self.qap.solution_size/2) - 1))
+        j = random.randint(math.floor(self.qap.solution_size/2), (self.qap.solution_size - 1))
+        
+        
+        #Child1
+        selected_values = parent1['solution'][i:j]
+        child1['solution'][i:j] = selected_values
+        parent2_values = []
+        for m in range(len(parent2['solution'])):
+            if not parent2['solution'][m] in selected_values:
+                parent2_values.append(parent2['solution'][m])
+        
+        
+        k = 0
+        for m in range(len(child1['solution'])):
+            if child1['solution'][m] == 0:
+                child1['solution'][m] = parent2_values[k]
+                k += 1 
+            
+        
+        #Child2
+        selected_values = parent2['solution'][i:j]
+        child2['solution'][i:j] = selected_values
+        
+        
+        parent1_values = []
+        for n in range(len(parent1['solution'])):
+            if not parent1['solution'][n] in selected_values:
+                parent1_values.append(parent1['solution'][n])
+        
+    
+        k = 0
+        for m in range(len(child2['solution'])):
+            if child2['solution'][m] == 0:
+                child2['solution'][m] = parent1_values[k]
+                k += 1 
+
+        return child1, child2
+
+
     def reproducePopulation(self, selected_population):
+        new_population = []
+        reproduction_times = 100
+
+        for i in range(reproduction_times):
+            index_parent1 = random.randint(0, (len(selected_population) - 1))
+            index_parent2 = random.randint(0, (len(selected_population) - 2))
+
+            #Check that parent1 is not the same as parent2
+            if index_parent1 == index_parent2:
+                index_parent2 += 1
+            
+            parent1 = selected_population[index_parent1]
+            parent2 = selected_population[index_parent2]
+            # print("--------")
+            # print(f"{parent1}")
+            # print(f"{parent2}")
+            # print("-******-")
+            child1, child2 = self.one_point_crossover(parent1, parent2)
+
+            #Mutate childs
+            child1 = self.mutateChild(child1)
+            child2 = self.mutateChild(child2)
+
+            new_population.append(child1)
+            new_population.append(child2)
+        
+        return new_population
+
+    """
+    def reproducePopulation(self, selected_population):
+        #1 Point CrossOver
+
         new_population = selected_population.copy()
 
 
         #Take a parent, select a portion of his solution, and create a new child
         m = len(selected_population) 
 
-        #Los indices de la solucion se dejaron fijos entre el 20% y el 60% de la solucion 
-        first_index = math.floor(self.qap.solution_size * 0.2)
+        #Los indices de la solucion se dejaron fijos entre el 30% y el 60% de la solucion 
+        first_index = math.floor(self.qap.solution_size * 0.3)
         second_index = math.floor(self.qap.solution_size * 0.6)
 
         for i in range(m):
@@ -183,11 +298,12 @@ class GA:
             exit()
         
         return new_population
+    """
 
 
     def findBestInPopulation(self, population):
         best_index = 0
-        best_value = 9999999
+        best_value = 999999999
         m = len(population)
 
         for p in range(m):
@@ -195,47 +311,81 @@ class GA:
                 best_index = p
                 best_value = population[p]['fitness']
 
-        self.best_generation.append(population[best_index]['fitness']) 
+        self.results['population_of_best'].append(population[best_index]['fitness']) 
 
+
+    def replacePopulation(self, new_population):
+        all_population = new_population.copy()
+        all_population.extend(self.population)
+
+        #Sort best_population
+        all_population = sorted(all_population, key=lambda k: k['fitness'])
+        best = []
+        for i in range(self.size_population):
+            best.append(all_population[i])
         
+        return best
+    
+
+    def calculateMeanPopulation(self):
+        total = 0
+        m = len(self.population)
+        for i in range(m):
+            total += self.population[i]['fitness']
+
+        self.results['mean_generation'].append((total/m))
+
+
+    def getMean(self, values):
+        m = len(values)
+        total = 0
+        for i in range(m):
+            total += values[i]
+        
+        return round(total/m)
+
+
     def run(self):
         #Initial population
         self.generateInitialPopulation()
 
-        print("----- Initial population. ---------")
-        self.printPopulation(10)
-        print("------------------------------------")
+        # print("----- Initial population. ---------")
+        # self.printPopulation(10)
+        # print("------------------------------------")
 
         new_population = []
         t = 0
-        
+
+        start_total = time.time()
+
         #Termination critearia
         while t < self.total_generations:
+            start_time_iterations = time.time()
+
             #Evaluate population
             self.evaluatePopulation(self.population)
-
-            print(f"---- Gen: {t} --")
-            self.printPopulation(10)
-            # print(len(self.population))
-            print("-----------------")
-
             #Select new population
-            new_population = self.selectionCriteria()
+            selected_population = self.selectionCriteria()
+
 
             #Reproduction
-            new_population = self.reproducePopulation(new_population)
-
+            new_population = self.reproducePopulation(selected_population)
             self.evaluatePopulation(new_population)
+            final_population = self.replacePopulation(new_population)
 
             #Find best in generation
-            self.findBestInPopulation(new_population)
+            self.findBestInPopulation(final_population)
+            self.population = final_population.copy()
+            self.evaluatePopulation(self.population)
+            self.calculateMeanPopulation()
 
-            self.population = new_population.copy()
-
-            t += 1
-
-
-        print("Finished GA")
-        print(self.best_generation)
+            self.results['time_per_gen'].append(time.time() - start_time_iterations)
         
-        #Return best indidual or best population
+            t += 1
+        
+
+        self.mean_all_of_value = self.getMean(self.results['mean_generation'])
+        self.mean_best_of_value = self.getMean(self.results['population_of_best'])
+        self.mean_time_per_iter = self.getMean(self.results['time_per_gen'])
+        self.total_time = time.time() - start_total
+
