@@ -87,7 +87,7 @@ class GA:
 
     def bestOfTournament(self, tournament):
         best_index = 0
-        best_value = 0
+        best_value = 9999999999999999
         m = len(tournament)
 
         for i in range(m):
@@ -215,7 +215,7 @@ class GA:
 
     def reproducePopulation(self, selected_population):
         new_population = []
-        reproduction_times = 100
+        reproduction_times = 400
 
         for i in range(reproduction_times):
             index_parent1 = random.randint(0, (len(selected_population) - 1))

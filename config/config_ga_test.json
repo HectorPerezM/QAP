@@ -1,0 +1,47 @@
+[
+    {
+        "size_experiment": 15,
+        "dataset_name": "chr12a",
+        "data_path": "./data/",
+        "type_initial_solution": "random",
+        "metaheuristic": "genetic_algorithm",
+        "total_generations": 50,
+        "size_population": 450,
+        "selection_criteria": "tournament",
+        "tournament_size": 100,
+        "tournament_times": 275,
+        "random_selection": 25,
+        "random_percentage": 30,
+        "mutation_chance": 0.01
+    },
+    {
+        "size_experiment": 20,
+        "dataset_name": "chr12a",
+        "data_path": "./data/",
+        "type_initial_solution": "random",
+        "metaheuristic": "genetic_algorithm",
+        "total_generations": 100,
+        "size_population": 300,
+        "selection_criteria": "tournament",
+        "tournament_size": 35,
+        "tournament_times": 150,
+        "random_selection": 25,
+        "random_percentage": 30,
+        "mutation_chance": 0.01
+    },
+    {
+        "size_experiment": 20,
+        "dataset_name": "chr12a",
+        "data_path": "./data/",
+        "type_initial_solution": "random",
+        "metaheuristic": "genetic_algorithm",
+        "total_generations": 100,
+        "size_population": 200,
+        "selection_criteria": "tournament",
+        "tournament_size": 35,
+        "tournament_times": 100,
+        "random_selection": 25,
+        "random_percentage": 30,
+        "mutation_chance": 0.01
+    }
+]

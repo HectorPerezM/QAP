@@ -63,6 +63,19 @@ class QAP:
                 self.dmatrix.append(aux)
 
             self.solution_size = len(self.fmatrix)
+        
+        elif config['dataset_name'] == "esc32a":
+            raw_f_data = open(config['data_path'] + "/FEsc32a.txt", "r")
+            for line in raw_f_data:
+                aux = list(map(int, line.split()))
+                self.fmatrix.append(aux)
+                
+            raw_d_data = open(config['data_path'] + "/DEsc32a.txt", "r")
+            for line in raw_d_data:
+                aux = list(map(int, line.split()))
+                self.dmatrix.append(aux)
+
+            self.solution_size = len(self.fmatrix)
 
         else:
             print('No existe el archivo de datos.')

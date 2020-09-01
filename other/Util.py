@@ -29,7 +29,7 @@ class Util:
         if self.selected_config == 1:
             self.config_path = 'config/config_SA.json'
         elif self.selected_config == 2:
-            self.config_path = 'config/config_GA.json'
+            self.config_path = 'config/config_ga_test.json'
         else:
             print('Bad choice.')
             exit()
@@ -116,15 +116,20 @@ class Util:
             plt.clf()
         
         if config['metaheuristic'] == "genetic_algorithm":
-            plt.figure(1, figsize=(10,10))
-            plt.subplot(1, 1, 1)
-            best = plt.plot(solver.experiment_results['of_values'])
-            plt.setp(best,"linestyle","none","marker",".","color","b","markersize","1")
-            plt.title("Genetic Algorithm QAP: " + config['dataset_name']) 
+            # plt.figure(1, figsize=(10,10))
+            # plt.subplot(1, 1, 1)
+            # best = plt.plot(solver.experiment_results['of_values'])
+            # plt.setp(best,"linestyle","none","marker",".","color","b","markersize","1")
+            # plt.title("Genetic Algorithm QAP: " + config['dataset_name']) 
+            # plt.ylabel("Objective Value")
+
+            plt.plot(solver.results['mean_generation'], '-r', label="Mean OF Value")
+            plt.plot(solver.results['population_of_best'], '-b', label="Best OF Value")
+            plt.title("Genetic Algorithm QAP: " + config['dataset_name'])
             plt.ylabel("Objective Value")
+            plt.xlabel("Generation")
 
-
-            path_to_save = config['results_path'] + config['images_path'] + str(config_number) + "_" +str(e) + ".png"
+            path_to_save = f"./results/ga/images/{config_number}_{e}_ofvalues_{config['dataset_name']}.png"
             plt.savefig(path_to_save)
             plt.clf()
                         

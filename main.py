@@ -31,6 +31,7 @@ def main():
                     'total_time': solver.total_time
                 }
                 util.experiment.append(data)
+                util.savePlot(i, e, config[i], solver)
                 
 
             #Solve with GA
@@ -44,6 +45,7 @@ def main():
                     'total_time': solver.total_time
                 }
                 util.experiment.append(data)
+                util.savePlot(i, e, config[i], solver)
 
             else:
                 print("Not implemented yet.")
@@ -53,12 +55,12 @@ def main():
 
         util.wirteResults(config[i]['dataset_name'], i)
     
-    util.saveBoxplot('chr12a', 0, 1)
-    util.saveBoxplot('chr12a', 3, 2)
-    util.saveBoxplot('esc64a', 6, 1)
-    util.saveBoxplot('esc64a', 9, 2)
-    util.saveBoxplot('chr25a', 12, 1)
-    util.saveBoxplot('chr25a', 15, 2)
+    util.saveBoxplot('esc32a', 0, 1)
+    # util.saveBoxplot('chr12a', 3, 2)
+    # util.saveBoxplot('esc64a', 6, 1)
+    # util.saveBoxplot('esc64a', 9, 2)
+    # util.saveBoxplot('chr25a', 12, 1)
+    # util.saveBoxplot('chr25a', 15, 2)
 
 
     # util.saveBoxplot()
